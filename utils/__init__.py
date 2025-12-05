@@ -8,6 +8,7 @@ from utils.validators import (
 from utils.data_generators import UserDataGenerator, generate_random_email
 from utils.helpers import assert_status_code, extract_json_field
 from utils.models import UserModel, CreateUserRequest, CompanyModel, ErrorResponse
+from utils.logging import get_logger, setup_logger
 
 __all__ = [
     "validate_json_schema",
@@ -21,5 +22,7 @@ __all__ = [
     "CreateUserRequest",
     "CompanyModel",
     "ErrorResponse",
+    "get_logger",
+    "setup_logger",
 ]
 

@@ -1,10 +1,12 @@
 """Validators for API responses."""
 
 import time
-from typing import Any, Dict, Type
-from jsonschema import validate, ValidationError
-from pydantic import BaseModel, ValidationError as PydanticValidationError
+from typing import Any, Dict, Iterable, Type, Union
+
 import requests
+from jsonschema import ValidationError, validate
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticValidationError
 
 
 def validate_json_schema(
@@ -84,7 +86,7 @@ def validate_response_time(
 
 def validate_status_code(
     response: requests.Response,
-    expected_codes: list[int] | int = 200
+    expected_codes: Union[int, Iterable[int]] = 200
 ) -> bool:
     """Проверяет статус код ответа.
     

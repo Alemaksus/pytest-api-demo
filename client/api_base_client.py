@@ -1,18 +1,16 @@
 """Базовый API клиент с логированием, retry и обработкой ошибок."""
 
-import logging
 import time
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 import requests
-from requests.exceptions import Timeout, RequestException
+from requests.exceptions import RequestException, Timeout
 
-from client.exceptions import (
-    APIRequestException,
-    APITimeoutException,
-    APIRetryException
-)
+from client.exceptions import (APIRequestException, APIRetryException,
+                               APITimeoutException)
+from utils.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class BaseClient:

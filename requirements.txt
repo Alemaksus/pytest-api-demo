@@ -8,6 +8,7 @@ pytest-timeout>=2.1.0  # таймауты для тестов
 # Валидация
 jsonschema>=4.19.0
 pydantic>=2.4.0
+email-validator>=2.0.0  # требуется для EmailStr в Pydantic v2
 
 # Генерация тест-данных
 faker>=19.0.0

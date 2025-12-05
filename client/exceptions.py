@@ -1,5 +1,7 @@
 """Custom exceptions for API client."""
 
+from typing import Optional
+
 
 class APIException(Exception):
     """Базовое исключение для API ошибок."""
@@ -12,8 +14,8 @@ class APIRequestException(APIException):
     def __init__(
         self,
         message: str,
-        status_code: int = None,
-        response_text: str = None
+        status_code: Optional[int] = None,
+        response_text: Optional[str] = None
     ):
         self.status_code = status_code
         self.response_text = response_text

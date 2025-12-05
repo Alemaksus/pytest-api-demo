@@ -1,10 +1,12 @@
 """Pytest configuration and shared fixtures."""
 
-import pytest
 import logging
 from typing import Generator
+
+import pytest
+
 from client.api_base_client import BaseClient
-from config.settings import get_settings
+from config.settings import Settings, get_settings
 
 # Настройка логирования
 logging.basicConfig(
@@ -15,8 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="session")
-def settings():
-    """Фикстура для получения настроек проекта."""
+def settings() -> Settings:
+    """Фикстура для доступа к настройкам окружения (BASE_URL, ENV, токены и т.п.).
+
+    Возвращает объект настроек, который переиспользуется во всех тестах.
+    """
     return get_settings()
 
 
@@ -37,8 +42,7 @@ def api_client(settings) -> BaseClient:
 
 @pytest.fixture(scope="session")
 def auth_token(api_client: BaseClient, settings) -> str:
-    """Фикстура для получения токена авторизации.
-    
+    """Фикстура для получения токена авторизации.  
     Выполняет авторизацию один раз на сессию и возвращает токен.
     """
     logger.info("Getting auth token")
@@ -62,7 +66,6 @@ def auth_token(api_client: BaseClient, settings) -> str:
 @pytest.fixture
 def auth_client(api_client: BaseClient, auth_token: str) -> BaseClient:
     """Фикстура для создания авторизованного клиента.
-    
     Автоматически добавляет Authorization заголовок к каждому запросу.
     """
     # Создаем копию заголовков, чтобы не изменять оригинальный клиент
@@ -83,7 +86,6 @@ def log_test_start(request):
 @pytest.fixture
 def clean_user_data():
     """Фикстура для очистки тестовых данных после теста.
-    
     Можно использовать для удаления созданных в тесте данных.
     """
     created_ids = []

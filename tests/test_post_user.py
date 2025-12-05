@@ -51,3 +51,4 @@ def test_create_user_success(auth_client):
     with allure.step("Проверка бизнес-логики"):
         assert body["email"] == payload["email"]
         assert body["role"] in ("user", "admin", "moderator")
+
