@@ -1,4 +1,4 @@
-"""Централизованная настройка логирования для фреймворка."""
+"""Centralized logging configuration for the framework."""
 
 import logging
 import sys
@@ -10,29 +10,29 @@ def setup_logger(
     level: Optional[int] = None,
     format_string: Optional[str] = None
 ) -> logging.Logger:
-    """Создает и настраивает логгер для модуля.
+    """Creates and configures a logger for a module.
     
     Args:
-        name: Имя логгера (обычно __name__ модуля)
-        level: Уровень логирования (по умолчанию INFO)
-        format_string: Формат строки логов (по умолчанию стандартный формат)
+        name: Logger name (typically __name__ of the module)
+        level: Logging level (defaults to INFO)
+        format_string: Log format string (defaults to standard format)
         
     Returns:
-        Настроенный объект Logger
+        Configured Logger object
     """
     logger = logging.getLogger(name)
     
-    # Если логгер уже настроен, возвращаем его
+    # If logger is already configured, return it
     if logger.handlers:
         return logger
     
-    # Уровень логирования
+    # Set logging level
     if level is None:
         level = logging.INFO
     
     logger.setLevel(level)
     
-    # Формат логирования
+    # Set log format
     if format_string is None:
         format_string = (
             '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -40,33 +40,35 @@ def setup_logger(
     
     formatter = logging.Formatter(format_string)
     
-    # Обработчик для вывода в консоль
+    # Console output handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(level)
     console_handler.setFormatter(formatter)
     
     logger.addHandler(console_handler)
     
-    # Предотвращаем дублирование логов
+    # Prevent log duplication
     logger.propagate = False
     
     return logger
 
 
 def get_logger(name: str) -> logging.Logger:
-    """Получить логгер для модуля.
+    """Get a logger for a module.
     
-    Удобная функция для быстрого получения настроенного логгера.
+    Convenient function for quickly obtaining a configured logger.
     
     Args:
-        name: Имя логгера (обычно __name__ модуля)
+        name: Logger name (typically __name__ of the module)
         
     Returns:
-        Настроенный объект Logger
+        Configured Logger object
         
     Example:
         >>> logger = get_logger(__name__)
         >>> logger.info("Test message")
     """
     return setup_logger(name)
+
+
 

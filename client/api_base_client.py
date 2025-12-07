@@ -1,4 +1,4 @@
-"""Базовый API клиент с логированием, retry и обработкой ошибок."""
+"""Base API client with logging, retry mechanism, and error handling."""
 
 import time
 from typing import Any, Dict, Optional
@@ -14,14 +14,14 @@ logger = get_logger(__name__)
 
 
 class BaseClient:
-    """Базовый клиент для REST API с единым методом request,
-    поддержкой сессий, заголовков, логирования и обработкой ошибок.
+    """Base client for REST API with unified request method,
+    session support, headers, logging, and error handling.
     
     Features:
-    - Логирование всех запросов и ответов
-    - Retry механизм для нестабильных запросов
-    - Кастомные исключения для лучшей обработки ошибок
-    - Поддержка таймаутов
+    - Logging of all requests and responses
+    - Retry mechanism for unstable requests
+    - Custom exceptions for better error handling
+    - Timeout support
     """
 
     def __init__(
@@ -32,14 +32,14 @@ class BaseClient:
         retry_count: int = 3,
         retry_delay: float = 1.0
     ):
-        """Инициализация API клиента.
+        """Initialize API client.
         
         Args:
-            base_url: Базовый URL API
-            default_headers: Заголовки по умолчанию для всех запросов
-            timeout: Таймаут запросов в секундах
-            retry_count: Количество попыток при ошибке
-            retry_delay: Задержка между попытками в секундах
+            base_url: Base API URL
+            default_headers: Default headers for all requests
+            timeout: Request timeout in seconds
+            retry_count: Number of retry attempts on error
+            retry_delay: Delay between retry attempts in seconds
         """
         self.base_url = base_url.rstrip("/")
         self.session = requests.Session()
@@ -54,7 +54,7 @@ class BaseClient:
         )
 
     def _build_url(self, path: str) -> str:
-        """Строит полный URL из базового URL и пути."""
+        """Builds full URL from base URL and path."""
         return f"{self.base_url}/{path.lstrip('/')}"
 
     def _log_request(
@@ -65,7 +65,7 @@ class BaseClient:
         json_data: Optional[Dict[str, Any]] = None,
         params: Optional[Dict[str, Any]] = None
     ) -> None:
-        """Логирует детали запроса."""
+        """Logs request details."""
         logger.info(f"→ {method} {url}")
         if params:
             logger.debug(f"  Params: {params}")
@@ -75,7 +75,7 @@ class BaseClient:
             logger.debug(f"  Headers: {dict(headers)}")
 
     def _log_response(self, response: requests.Response) -> None:
-        """Логирует детали ответа."""
+        """Logs response details."""
         elapsed_ms = response.elapsed.total_seconds() * 1000
         logger.info(
             f"← {response.status_code} {response.reason} "
@@ -96,36 +96,36 @@ class BaseClient:
         retry: bool = True,
         **kwargs
     ) -> requests.Response:
-        """Выполняет HTTP запрос с логированием и retry механизмом.
+        """Executes HTTP request with logging and retry mechanism.
         
         Args:
-            method: HTTP метод (GET, POST, PUT, DELETE, etc.)
-            path: Путь эндпоинта
-            json: JSON данные для тела запроса
-            params: Query параметры
-            headers: Дополнительные заголовки
-            retry: Включить ли retry механизм
-            **kwargs: Дополнительные параметры для requests
+            method: HTTP method (GET, POST, PUT, DELETE, etc.)
+            path: Endpoint path
+            json: JSON data for request body
+            params: Query parameters
+            headers: Additional headers
+            retry: Enable retry mechanism
+            **kwargs: Additional parameters for requests
             
         Returns:
-            Объект Response из requests
+            Response object from requests
             
         Raises:
-            APITimeoutException: При таймауте запроса
-            APIRequestException: При ошибке HTTP запроса
-            APIRetryException: Когда все попытки retry исчерпаны
+            APITimeoutException: On request timeout
+            APIRequestException: On HTTP request error
+            APIRetryException: When all retry attempts are exhausted
         """
         url = self._build_url(path)
 
-        # Собираем финальные заголовки
+        # Assemble final headers
         final_headers = self.default_headers.copy()
         if headers:
             final_headers.update(headers)
 
-        # Логируем запрос
+        # Log request
         self._log_request(method, url, final_headers, json, params)
 
-        # Retry механизм
+        # Retry mechanism
         last_exception = None
         for attempt in range(1, (self.retry_count + 1) if retry else 2):
             try:
@@ -139,10 +139,10 @@ class BaseClient:
                     **kwargs
                 )
 
-                # Логируем ответ
+                # Log response
                 self._log_response(response)
 
-                # Обработка ошибок сервера
+                # Handle server errors
                 if response.status_code >= 500:
                     error_msg = (
                         f"Server error {response.status_code}: "
@@ -186,29 +186,29 @@ class BaseClient:
                     f"Request failed: {str(e)}"
                 ) from e
 
-        # Если все попытки исчерпаны
+        # If all attempts are exhausted
         raise APIRetryException(
             f"All {self.retry_count} retry attempts failed. "
             f"Last error: {str(last_exception)}"
         )
 
-    # Удобные короткие методы
+    # Convenient shorthand methods
     def get(self, path: str, **kwargs) -> requests.Response:
-        """GET запрос."""
+        """GET request."""
         return self.request("GET", path, **kwargs)
 
     def post(self, path: str, json: Optional[Dict[str, Any]] = None, **kwargs) -> requests.Response:
-        """POST запрос."""
+        """POST request."""
         return self.request("POST", path, json=json, **kwargs)
 
     def put(self, path: str, json: Optional[Dict[str, Any]] = None, **kwargs) -> requests.Response:
-        """PUT запрос."""
+        """PUT request."""
         return self.request("PUT", path, json=json, **kwargs)
 
     def patch(self, path: str, json: Optional[Dict[str, Any]] = None, **kwargs) -> requests.Response:
-        """PATCH запрос."""
+        """PATCH request."""
         return self.request("PATCH", path, json=json, **kwargs)
 
     def delete(self, path: str, **kwargs) -> requests.Response:
-        """DELETE запрос."""
+        """DELETE request."""
         return self.request("DELETE", path, **kwargs)

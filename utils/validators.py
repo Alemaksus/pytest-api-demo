@@ -14,18 +14,18 @@ def validate_json_schema(
     schema: Dict[str, Any],
     raise_on_error: bool = True
 ) -> bool:
-    """Валидирует JSON данные по JSON Schema.
+    """Validates JSON data against JSON Schema.
     
     Args:
-        instance: JSON данные для валидации
-        schema: JSON Schema для проверки
-        raise_on_error: Если True, выбрасывает исключение при ошибке валидации
+        instance: JSON data to validate
+        schema: JSON Schema for validation
+        raise_on_error: If True, raises exception on validation error
         
     Returns:
-        True если валидация прошла успешно
+        True if validation passed successfully
         
     Raises:
-        ValidationError: Если валидация не прошла и raise_on_error=True
+        ValidationError: If validation failed and raise_on_error=True
     """
     try:
         validate(instance=instance, schema=schema)
@@ -44,18 +44,18 @@ def validate_pydantic_model(
     model_class: Type[BaseModel],
     raise_on_error: bool = True
 ) -> BaseModel:
-    """Валидирует данные через Pydantic модель.
+    """Validates data via Pydantic model.
     
     Args:
-        data: JSON данные для валидации
-        model_class: Класс Pydantic модели
-        raise_on_error: Если True, выбрасывает исключение при ошибке валидации
+        data: JSON data to validate
+        model_class: Pydantic model class
+        raise_on_error: If True, raises exception on validation error
         
     Returns:
-        Валидированный объект модели
+        Validated model object
         
     Raises:
-        PydanticValidationError: Если валидация не прошла и raise_on_error=True
+        PydanticValidationError: If validation failed and raise_on_error=True
     """
     try:
         return model_class(**data)
@@ -71,14 +71,14 @@ def validate_response_time(
     response: requests.Response,
     max_time_ms: float = 1000.0
 ) -> bool:
-    """Проверяет время ответа API.
+    """Checks API response time.
     
     Args:
-        response: Объект Response из requests
-        max_time_ms: Максимальное допустимое время ответа в миллисекундах
+        response: Response object from requests
+        max_time_ms: Maximum allowed response time in milliseconds
         
     Returns:
-        True если время ответа в пределах нормы
+        True if response time is within acceptable range
     """
     elapsed_ms = response.elapsed.total_seconds() * 1000
     return elapsed_ms <= max_time_ms
@@ -88,14 +88,14 @@ def validate_status_code(
     response: requests.Response,
     expected_codes: Union[int, Iterable[int]] = 200
 ) -> bool:
-    """Проверяет статус код ответа.
+    """Checks response status code.
     
     Args:
-        response: Объект Response из requests
-        expected_codes: Ожидаемый код(ы) статуса
+        response: Response object from requests
+        expected_codes: Expected status code(s)
         
     Returns:
-        True если статус код соответствует ожидаемому
+        True if status code matches expected value
     """
     if isinstance(expected_codes, int):
         expected_codes = [expected_codes]

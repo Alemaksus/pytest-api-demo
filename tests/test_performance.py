@@ -1,4 +1,4 @@
-"""Тесты производительности API."""
+"""API performance tests."""
 
 import pytest
 import allure
@@ -8,9 +8,9 @@ from utils.validators import validate_response_time
 
 @pytest.mark.slow
 @pytest.mark.api
-@allure.title("Проверка времени ответа GET запроса")
+@allure.title("GET request response time check")
 def test_get_user_performance(auth_client):
-    """Проверяет, что GET запрос выполняется быстро."""
+    """Verifies that GET request executes quickly."""
     response = auth_client.get("/users/1")
     
     response_time_ms = get_response_time_ms(response)
@@ -20,16 +20,16 @@ def test_get_user_performance(auth_client):
         attachment_type=allure.attachment_type.TEXT
     )
     
-    # Проверяем, что ответ пришел менее чем за 500мс
+    # Verify response came in less than 500ms
     assert validate_response_time(response, max_time_ms=500), \
         f"Response time {response_time_ms}ms exceeds 500ms"
 
 
 @pytest.mark.slow
 @pytest.mark.api
-@allure.title("Проверка времени ответа POST запроса")
+@allure.title("POST request response time check")
 def test_create_user_performance(auth_client):
-    """Проверяет, что POST запрос выполняется в разумное время."""
+    """Verifies that POST request executes in reasonable time."""
     from utils.data_generators import UserDataGenerator
     
     payload = UserDataGenerator.generate_user()
@@ -42,21 +42,21 @@ def test_create_user_performance(auth_client):
         attachment_type=allure.attachment_type.TEXT
     )
     
-    # POST запросы могут быть медленнее, проверяем 1 секунду
+    # POST requests may be slower, check 1 second
     assert validate_response_time(response, max_time_ms=1000), \
         f"Response time {response_time_ms}ms exceeds 1000ms"
 
 
 @pytest.mark.slow
 @pytest.mark.parametrize("endpoint", ["/users", "/users/1", "/health"])
-@allure.title("Проверка производительности эндпоинта: {endpoint}")
+@allure.title("Endpoint performance check: {endpoint}")
 def test_endpoint_performance(auth_client, endpoint):
-    """Проверяет производительность различных эндпоинтов."""
+    """Verifies performance of various endpoints."""
     response = auth_client.get(endpoint)
     
     response_time_ms = get_response_time_ms(response)
     
-    # Разные эндпоинты могут иметь разные требования к производительности
+    # Different endpoints may have different performance requirements
     max_time = 2000 if "/users" in endpoint else 1000
     
     assert validate_response_time(response, max_time_ms=max_time), \

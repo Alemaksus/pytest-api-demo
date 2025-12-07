@@ -8,7 +8,7 @@ import pytest
 from client.api_base_client import BaseClient
 from config.settings import Settings, get_settings
 
-# Настройка логирования
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -18,19 +18,19 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture(scope="session")
 def settings() -> Settings:
-    """Фикстура для доступа к настройкам окружения (BASE_URL, ENV, токены и т.п.).
+    """Fixture for accessing environment settings (BASE_URL, ENV, tokens, etc.).
 
-    Возвращает объект настроек, который переиспользуется во всех тестах.
+    Returns a settings object that is reused across all tests.
     """
     return get_settings()
 
 
 @pytest.fixture(scope="session")
 def api_client(settings) -> BaseClient:
-    """Фикстура для создания базового API клиента.
+    """Fixture for creating base API client.
     
-    Использует настройки из конфигурации для создания клиента.
-    Клиент создается один раз на всю сессию тестов.
+    Uses configuration settings to create the client.
+    Client is created once per test session.
     """
     logger.info(f"Creating API client for {settings.base_url}")
     client = BaseClient(
@@ -42,8 +42,8 @@ def api_client(settings) -> BaseClient:
 
 @pytest.fixture(scope="session")
 def auth_token(api_client: BaseClient, settings) -> str:
-    """Фикстура для получения токена авторизации.  
-    Выполняет авторизацию один раз на сессию и возвращает токен.
+    """Fixture for obtaining authentication token.
+    Performs authentication once per session and returns the token.
     """
     logger.info("Getting auth token")
     try:
@@ -65,10 +65,10 @@ def auth_token(api_client: BaseClient, settings) -> str:
 
 @pytest.fixture
 def auth_client(api_client: BaseClient, auth_token: str) -> BaseClient:
-    """Фикстура для создания авторизованного клиента.
-    Автоматически добавляет Authorization заголовок к каждому запросу.
+    """Fixture for creating authenticated client.
+    Automatically adds Authorization header to each request.
     """
-    # Создаем копию заголовков, чтобы не изменять оригинальный клиент
+    # Create a copy of headers to avoid modifying the original client
     api_client.session.headers.update({
         "Authorization": f"Bearer {auth_token}"
     })
@@ -77,7 +77,7 @@ def auth_client(api_client: BaseClient, auth_token: str) -> BaseClient:
 
 @pytest.fixture(autouse=True)
 def log_test_start(request):
-    """Автоматически логирует начало каждого теста."""
+    """Automatically logs the start of each test."""
     logger.info(f"Starting test: {request.node.name}")
     yield
     logger.info(f"Finished test: {request.node.name}")
@@ -85,14 +85,14 @@ def log_test_start(request):
 
 @pytest.fixture
 def clean_user_data():
-    """Фикстура для очистки тестовых данных после теста.
-    Можно использовать для удаления созданных в тесте данных.
+    """Fixture for cleaning up test data after test.
+    Can be used to delete data created during the test.
     """
     created_ids = []
     
     yield created_ids
     
-    # Cleanup логика (если нужна)
+    # Cleanup logic (if needed)
     if created_ids:
         logger.info(f"Cleaning up {len(created_ids)} test records")
 

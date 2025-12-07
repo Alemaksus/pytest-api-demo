@@ -7,7 +7,7 @@ fake = Faker()
 
 
 class UserDataGenerator:
-    """Генератор тестовых данных для пользователей."""
+    """Test data generator for users."""
     
     @staticmethod
     def generate_user(
@@ -15,15 +15,15 @@ class UserDataGenerator:
         name: Optional[str] = None,
         role: str = "user"
     ) -> Dict[str, Any]:
-        """Генерирует данные пользователя.
+        """Generates user data.
         
         Args:
-            email: Email пользователя (если не указан, генерируется автоматически)
-            name: Имя пользователя (если не указано, генерируется автоматически)
-            role: Роль пользователя (user, admin)
+            email: User email (if not provided, generated automatically)
+            name: User first name (if not provided, generated automatically)
+            role: User role (user, admin)
             
         Returns:
-            Словарь с данными пользователя
+            Dictionary with user data
         """
         return {
             "name": name or fake.first_name(),
@@ -38,7 +38,7 @@ class UserDataGenerator:
     
     @staticmethod
     def generate_invalid_email() -> str:
-        """Генерирует невалидный email."""
+        """Generates an invalid email."""
         invalid_emails = [
             "not-an-email",
             "@example.com",
@@ -51,27 +51,27 @@ class UserDataGenerator:
     
     @staticmethod
     def generate_empty_string() -> str:
-        """Возвращает пустую строку."""
+        """Returns an empty string."""
         return ""
 
 
 def generate_random_email() -> str:
-    """Генерирует случайный валидный email.
+    """Generates a random valid email.
     
     Returns:
-        Случайный email адрес
+        Random email address
     """
     return fake.email()
 
 
 def generate_random_string(length: int = 10) -> str:
-    """Генерирует случайную строку.
+    """Generates a random string.
     
     Args:
-        length: Длина строки
+        length: String length
         
     Returns:
-        Случайная строка
+        Random string
     """
     return fake.pystr(min_chars=length, max_chars=length)
 

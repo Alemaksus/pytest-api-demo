@@ -9,15 +9,15 @@ def assert_status_code(
     expected_code: int,
     message: Optional[str] = None
 ) -> None:
-    """Проверяет статус код ответа с понятным сообщением об ошибке.
+    """Checks response status code with a clear error message.
     
     Args:
-        response: Объект Response из requests
-        expected_code: Ожидаемый статус код
-        message: Дополнительное сообщение об ошибке
+        response: Response object from requests
+        expected_code: Expected status code
+        message: Additional error message
         
     Raises:
-        AssertionError: Если статус код не соответствует ожидаемому
+        AssertionError: If status code does not match expected value
     """
     error_msg = (
         f"Expected status code {expected_code}, "
@@ -35,15 +35,15 @@ def extract_json_field(
     field_path: str,
     default: Any = None
 ) -> Any:
-    """Извлекает поле из JSON ответа по пути.
+    """Extracts field from JSON response by path.
     
     Args:
-        response: Объект Response из requests
-        field_path: Путь к полю (например, "user.id" или "data[0].name")
-        default: Значение по умолчанию, если поле не найдено
+        response: Response object from requests
+        field_path: Path to field (e.g., "user.id" or "data[0].name")
+        default: Default value if field is not found
         
     Returns:
-        Значение поля или default
+        Field value or default
     """
     try:
         data = response.json()
@@ -51,7 +51,7 @@ def extract_json_field(
         result = data
         for key in keys:
             if "[" in key:
-                # Обработка массивов: "items[0]"
+                # Handle arrays: "items[0]"
                 field_name, index = key.split("[")
                 index = int(index.rstrip("]"))
                 result = result[field_name][index]
@@ -63,13 +63,13 @@ def extract_json_field(
 
 
 def get_response_time_ms(response: requests.Response) -> float:
-    """Получает время ответа в миллисекундах.
+    """Gets response time in milliseconds.
     
     Args:
-        response: Объект Response из requests
+        response: Response object from requests
         
     Returns:
-        Время ответа в миллисекундах
+        Response time in milliseconds
     """
     return response.elapsed.total_seconds() * 1000
 

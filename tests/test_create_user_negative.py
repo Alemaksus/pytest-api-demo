@@ -1,4 +1,4 @@
-"""Негативные тесты для создания пользователя."""
+"""Negative tests for user creation."""
 
 import pytest
 import allure
@@ -16,42 +16,42 @@ from utils.validators import validate_pydantic_model
         (
             {"email": "", "role": "user"},
             422,
-            "Пустой email должен возвращать 422"
+            "Empty email should return 422"
         ),
         (
             {"email": "not-email", "role": "user"},
             422,
-            "Невалидный email должен возвращать 422"
+            "Invalid email should return 422"
         ),
         (
             {"email": "qa@example.com", "role": "root"},
             422,
-            "Неверный enum для role должен возвращать 422"
+            "Invalid enum for role should return 422"
         ),
         (
             UserDataGenerator.generate_user(),
             400,
-            "Отсутствие обязательных полей должно возвращать 400"
+            "Missing required fields should return 400"
         ),
     ]
 )
-@allure.title("Негативные тесты создания пользователя: {error_description}")
+@allure.title("Negative user creation tests: {error_description}")
 def test_create_user_negative(auth_client, payload, expected_status, error_description):
-    """Тест обработки некорректных данных при создании пользователя."""
+    """Test handling of invalid data when creating a user."""
     
-    with allure.step(f"Отправка запроса с некорректными данными: {error_description}"):
+    with allure.step(f"Sending request with invalid data: {error_description}"):
         resp = auth_client.post("/users", json=payload)
     
-    with allure.step(f"Проверка статус кода {expected_status}"):
+    with allure.step(f"Checking status code {expected_status}"):
         assert_status_code(resp, expected_status)
     
-    with allure.step("Проверка структуры ответа об ошибке"):
+    with allure.step("Checking error response structure"):
         if resp.status_code >= 400:
             error_data = resp.json()
-            # Валидируем структуру ошибки через Pydantic (если API возвращает стандартный формат)
+            # Validate error structure via Pydantic (if API returns standard format)
             try:
                 error = validate_pydantic_model(error_data, ErrorResponse)
                 assert error.error is not None, "Error message should be present"
             except Exception:
-                # Если формат ошибки нестандартный, просто проверяем наличие данных
+                # If error format is non-standard, just check for data presence
                 assert error_data, "Error response should contain data"

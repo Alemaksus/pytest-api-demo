@@ -1,4 +1,4 @@
-"""Тесты создания пользователя с валидацией через JSON Schema и Pydantic."""
+"""User creation tests with validation via JSON Schema and Pydantic."""
 
 import pytest
 import allure
@@ -7,7 +7,7 @@ from utils.helpers import assert_status_code
 from utils.models import UserModel
 from utils.data_generators import UserDataGenerator
 
-# JSON Schema для валидации
+# JSON Schema for validation
 user_schema = {
     "type": "object",
     "properties": {
@@ -22,33 +22,35 @@ user_schema = {
 @pytest.mark.smoke
 @pytest.mark.api
 @pytest.mark.positive
-@allure.title("Создание пользователя - успешный сценарий")
-@allure.description("Проверка создания пользователя с валидацией ответа через JSON Schema и Pydantic")
+@allure.title("User creation - successful scenario")
+@allure.description("User creation test with response validation via JSON Schema and Pydantic")
 def test_create_user_success(auth_client):
-    """Тест успешного создания пользователя с полной валидацией."""
-    # Генерируем тестовые данные
+    """Test successful user creation with full validation."""
+    # Generate test data
     payload = UserDataGenerator.generate_user(role="user")
     
-    with allure.step("Отправка POST запроса для создания пользователя"):
+    with allure.step("Sending POST request to create user"):
         resp = auth_client.post("/users", json=payload)
     
-    with allure.step("Проверка статус кода"):
+    with allure.step("Checking status code"):
         assert_status_code(resp, 201)
     
-    with allure.step("Валидация времени ответа (должно быть < 1 сек)"):
+    with allure.step("Response time validation (should be < 1 sec)"):
         assert validate_response_time(resp, max_time_ms=1000), \
             f"Response time {resp.elapsed.total_seconds() * 1000}ms exceeds 1000ms"
     
-    with allure.step("Валидация через JSON Schema"):
+    with allure.step("Validation via JSON Schema"):
         body = resp.json()
         validate_json_schema(body, user_schema)
     
-    with allure.step("Валидация через Pydantic модель"):
+    with allure.step("Validation via Pydantic model"):
         user = validate_pydantic_model(body, UserModel)
         assert user.email == payload["email"]
         assert user.role == payload["role"]
     
-    with allure.step("Проверка бизнес-логики"):
+    with allure.step("Business logic check"):
         assert body["email"] == payload["email"]
         assert body["role"] in ("user", "admin", "moderator")
+
+
 

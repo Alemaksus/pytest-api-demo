@@ -4,12 +4,12 @@ from typing import Optional
 
 
 class APIException(Exception):
-    """Базовое исключение для API ошибок."""
+    """Base exception for API errors."""
     pass
 
 
 class APIRequestException(APIException):
-    """Исключение для ошибок HTTP запросов."""
+    """Exception for HTTP request errors."""
     
     def __init__(
         self,
@@ -23,17 +23,17 @@ class APIRequestException(APIException):
 
 
 class APITimeoutException(APIException):
-    """Исключение для таймаутов запросов."""
+    """Exception for request timeouts."""
     pass
 
 
 class APIValidationException(APIException):
-    """Исключение для ошибок валидации ответов."""
+    """Exception for response validation errors."""
     pass
 
 
 class APIRetryException(APIException):
-    """Исключение когда все попытки retry исчерпаны."""
+    """Exception when all retry attempts are exhausted."""
     pass
 
 

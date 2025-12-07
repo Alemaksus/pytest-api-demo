@@ -4,50 +4,50 @@ import os
 from typing import Optional
 from dotenv import load_dotenv
 
-# Загружаем переменные из .env файла
+# Load variables from .env file
 load_dotenv()
 
 
 class Settings:
-    """Класс для управления настройками проекта.
+    """Class for managing project settings.
     
-    Поддерживает разные окружения (dev, staging, prod) через переменную ENV.
-    Все настройки можно переопределить через переменные окружения.
+    Supports different environments (dev, staging, prod) via ENV variable.
+    All settings can be overridden via environment variables.
     """
     
     def __init__(self):
-        # Окружение (dev, staging, prod)
+        # Environment (dev, staging, prod)
         self.env: str = os.getenv("ENV", "dev")
         
-        # Базовый URL API
+        # Base API URL
         self.base_url: str = os.getenv(
             "BASE_URL",
             self._get_default_url()
         )
         
-        # Таймаут для запросов (секунды)
+        # Request timeout (seconds)
         self.timeout: int = int(os.getenv("TIMEOUT", "10"))
         
-        # Уровень логирования
+        # Logging level
         self.log_level: str = os.getenv("LOG_LEVEL", "INFO")
         
-        # Настройки авторизации
+        # Authentication settings
         self.auth_username: Optional[str] = os.getenv("AUTH_USERNAME")
         self.auth_password: Optional[str] = os.getenv("AUTH_PASSWORD")
         self.auth_token: Optional[str] = os.getenv("AUTH_TOKEN")
         
-        # Настройки для Allure
+        # Allure settings
         self.allure_results_dir: str = os.getenv(
             "ALLURE_RESULTS_DIR",
             "allure-results"
         )
         
-        # Retry настройки
+        # Retry settings
         self.retry_count: int = int(os.getenv("RETRY_COUNT", "3"))
         self.retry_delay: float = float(os.getenv("RETRY_DELAY", "1.0"))
     
     def _get_default_url(self) -> str:
-        """Возвращает URL по умолчанию в зависимости от окружения."""
+        """Returns default URL based on environment."""
         urls = {
             "dev": "https://api-dev.example.com",
             "staging": "https://api-staging.example.com",
@@ -59,12 +59,12 @@ class Settings:
         return f"Settings(env={self.env}, base_url={self.base_url})"
 
 
-# Глобальный экземпляр настроек
+# Global settings instance
 _settings: Optional[Settings] = None
 
 
 def get_settings() -> Settings:
-    """Получить глобальный экземпляр настроек (singleton pattern)."""
+    """Get global settings instance (singleton pattern)."""
     global _settings
     if _settings is None:
         _settings = Settings()
