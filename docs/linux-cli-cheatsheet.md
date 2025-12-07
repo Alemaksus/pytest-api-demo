@@ -1,130 +1,130 @@
 # **Linux CLI Cheatsheet for AQA Full Stack**
 
-# 🟩 **1. SSH — подключение к серверам**
+# 🟩 **1. SSH — Server Connection**
 
-### Подключение по ключу
+### Connection via key
 
 ssh -i ~/.ssh/id_rsa user@server
 
-Создание пары ключей
+Creating key pair
 
 ssh-keygen -t rsa -b 4096 -C "aleks@exante"
 
-Выполнить удалённую команду
+Execute remote command
 
 ssh user@server "tail -n 100 /var/log/app.log"
 
-Туннелирование порта
+Port tunneling
 
 ssh -L 8080:localhost:8000 user@server
-🟩 2. Логи: tail, grep, less
+🟩 2. Logs: tail, grep, less
 
-2.1. tail — живой просмотр логов
+2.1. tail — live log viewing
 
 tail -f app.log
 
-Живой поток + фильтр
+Live stream + filter
 
 tail -f app.log | grep -E "ERROR|500|502|timeout"
 
-Последние N строк
+Last N lines
 
 tail -n 200 app.log
 
-2.2. grep — быстрый поиск
+2.2. grep — quick search
 
-Базовый поиск
+Basic search
 
 grep "ERROR" app.log
 
-Несколько шаблонов
+Multiple patterns
 
 grep -E "ERROR|500|502|404" app.log
 
-Без учета регистра
+Case insensitive
 
 grep -i "timeout" app.log
 
-С номерами строк
+With line numbers
 
 grep -n "Exception" app.log
 
-Исключить строки
+Exclude lines
 
 grep -v "healthcheck" app.log
 
-Контекст вокруг строки
+Context around line
 
 grep -C 3 "ERROR" app.log
 
-Поиск рекурсивно по каталогу
+Recursive search in directory
 
 grep -R "jdbc.url" /etc/myapp
 
-Только имена файлов
+File names only
 
 grep -Rl "database" /opt/project/
 
-2.3. less — удобный просмотр больших файлов
+2.3. less — convenient viewing of large files
 
 less app.log
 
-Навигация:
+Navigation:
 
-/text — поиск
+/text — search
 
-PgUp / PgDn — страницы
+PgUp / PgDn — pages
 
-G — конец файла
+G — end of file
 
-g — начало
+g — beginning
 
-q — выход
+q — exit
 
-🟩 3. Производительность: top, ps
+🟩 3. Performance: top, ps
 
-Смотреть загрузку системы
+View system load
 
 top
-Найти java-процессы
+Find java processes
 
 ps aux | grep java
-Посмотреть память и CPU
-CPU% — использует ли сервис ядра
+View memory and CPU
+CPU% — whether service uses cores
 
-RES — реальная память
+RES — real memory
 
-SWAP — начался ли свопинг (плохо)
+SWAP — whether swapping started (bad)
 
-🟩 4. Сеть: curl, ss, iptables
+🟩 4. Network: curl, ss, iptables
 
-Посмотреть healthcheck
+Check healthcheck
 
 curl -v <http://localhost:8080/health>
 
-Проверить слушающий порт
+Check listening port
 
 ss -tulpn | grep 8080
 
-Посмотреть firewall-правила
+View firewall rules
 
 sudo iptables -L -n -v
 
-🟩 5. Типовые QA-кейсы
+🟩 5. Typical QA Cases
 
-Найти ошибки за сегодня
+Find errors for today
 
 grep "2025-11-15" app.log | grep -E "ERROR|500|502"
 
-Найти цепочку одного запроса
+Find chain of one request
 
 grep -R "requestId=abc-123" /var/log/
 
-Падения БД
+Database crashes
 
 grep -E "Connection refused|timeout|could not connect" app.log
 
-Долгие запросы
+Slow requests
 
 grep -E "took=[0-9]+ms" app.log
 
@@ -132,6 +132,6 @@ NullPointer / Exception
 
 grep -E "Exception|NullPointer" app.log
 
-Ошибки 404/500/502
+404/500/502 errors
 
 grep -E " 404 | 500 | 502 " nginx-access.log

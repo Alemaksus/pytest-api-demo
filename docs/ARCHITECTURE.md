@@ -1,137 +1,137 @@
-# Архитектура фреймворка
+# Framework Architecture
 
-Этот документ описывает архитектуру API-тестирования фреймворка простым языком. Он поможет понять, как устроен фреймворк и как он работает.
+This document describes the API testing framework architecture in simple terms. It will help you understand how the framework is structured and how it works.
 
-## 📁 Структура каталогов
+## 📁 Directory Structure
 
-Фреймворк организован в несколько основных модулей:
+The framework is organized into several main modules:
 
-### `client/` — API клиент
+### `client/` — API Client
 
-Здесь находится код для работы с API:
+This contains code for working with the API:
 
-- **`api_base_client.py`** — базовый HTTP клиент. Это главный класс `BaseClient`, который умеет делать запросы (GET, POST, PUT, DELETE), логировать их, повторять при ошибках (retry механизм) и обрабатывать таймауты.
-- **`exceptions.py`** — кастомные исключения для обработки ошибок API (`APIRequestException`, `APITimeoutException` и т.д.).
+- **`api_base_client.py`** — base HTTP client. This is the main `BaseClient` class that can make requests (GET, POST, PUT, DELETE), log them, retry on errors (retry mechanism), and handle timeouts.
+- **`exceptions.py`** — custom exceptions for handling API errors (`APIRequestException`, `APITimeoutException`, etc.).
 
-**Простыми словами:** Это "посредник" между тестами и API. Вместо того чтобы в каждом тесте писать `requests.get()`, мы используем `api_client.get()` — это удобнее и переиспользуемо.
+**In simple terms:** This is the "middleman" between tests and the API. Instead of writing `requests.get()` in every test, we use `api_client.get()` — this is more convenient and reusable.
 
-### `config/` — Конфигурация
+### `config/` — Configuration
 
-Настройки проекта:
+Project settings:
 
-- **`settings.py`** — класс `Settings`, который читает переменные окружения из `.env` файла (BASE_URL, токены, таймауты и т.д.).
+- **`settings.py`** — `Settings` class that reads environment variables from the `.env` file (BASE_URL, tokens, timeouts, etc.).
 
-**Простыми словами:** Здесь хранятся все настройки — куда отправлять запросы, какие токены использовать, сколько ждать ответа.
+**In simple terms:** This is where all settings are stored — where to send requests, which tokens to use, how long to wait for a response.
 
-### `utils/` — Утилиты
+### `utils/` — Utilities
 
-Вспомогательные функции, которые используются в тестах:
+Helper functions used in tests:
 
-- **`logging.py`** — централизованная настройка логирования. Содержит функции `get_logger()` и `setup_logger()` для создания настроенных логгеров во всех модулях фреймворка.
-- **`validators.py`** — функции для валидации ответов (проверка статус-кода, времени ответа, JSON Schema).
-- **`helpers.py`** — вспомогательные функции (извлечение полей из JSON, проверка статус-кодов).
-- **`data_generators.py`** — генераторы тестовых данных (создание случайных пользователей, email и т.д.).
-- **`models.py`** — Pydantic модели для валидации данных (пока в планах).
+- **`logging.py`** — centralized logging configuration. Contains `get_logger()` and `setup_logger()` functions for creating configured loggers in all framework modules.
+- **`validators.py`** — functions for validating responses (checking status code, response time, JSON Schema).
+- **`helpers.py`** — helper functions (extracting fields from JSON, checking status codes).
+- **`data_generators.py`** — test data generators (creating random users, emails, etc.).
+- **`models.py`** — Pydantic models for data validation (planned).
 
-**Простыми словами:** Это "инструменты" для тестов — функции, которые помогают проверять ответы, создавать тестовые данные и логировать события.
+**In simple terms:** These are "tools" for tests — functions that help check responses, create test data, and log events.
 
-### `tests/` — Тесты
+### `tests/` — Tests
 
-Здесь живут все тесты:
+This is where all tests live:
 
-- **`conftest.py`** — фикстуры pytest. Это специальные функции, которые создают API клиент, получают токен авторизации и т.д. Они автоматически доступны во всех тестах.
-- **`test_*.py`** — сами тесты (CRUD тесты, негативные тесты, тесты производительности и т.д.).
+- **`conftest.py`** — pytest fixtures. These are special functions that create an API client, get an authentication token, etc. They are automatically available in all tests.
+- **`test_*.py`** — the tests themselves (CRUD tests, negative tests, performance tests, etc.).
 
-**Простыми словами:** Это сами тесты и настройки pytest, которые делают тесты удобнее.
+**In simple terms:** These are the tests themselves and pytest settings that make tests more convenient.
 
-### `data/` — Тестовые данные
+### `data/` — Test Data
 
-JSON файлы со схемами, примерами данных и т.д.
+JSON files with schemas, data examples, etc.
 
-## 🔄 Поток выполнения теста
+## 🔄 Test Execution Flow
 
-Давайте разберем, как работает тест от начала до конца:
+Let's break down how a test works from start to finish:
 
 ```
-Тест → Фикстура → Клиент → Запрос → Ответ → Валидатор → Результат
+Test → Fixture → Client → Request → Response → Validator → Result
 ```
 
-### Шаг 1: Тест запускается
+### Step 1: Test starts
 
 ```python
 def test_create_user(auth_client):
-    # Тест начинается
+    # Test begins
 ```
 
-### Шаг 2: Фикстура создает клиент
+### Step 2: Fixture creates client
 
-Pytest автоматически вызывает фикстуру `auth_client` из `conftest.py`:
+Pytest automatically calls the `auth_client` fixture from `conftest.py`:
 
-- Фикстура `api_client` создает объект `BaseClient` с настройками из `config/settings.py`
-- Фикстура `auth_token` получает токен авторизации
-- Фикстура `auth_client` объединяет их — создает клиент с уже подставленным токеном
+- The `api_client` fixture creates a `BaseClient` object with settings from `config/settings.py`
+- The `auth_token` fixture gets an authentication token
+- The `auth_client` fixture combines them — creates a client with the token already set
 
-**Простыми словами:** Фикстура — это "подготовитель". Она готовит всё необходимое для теста (клиент, токен) и передает это в тест.
+**In simple terms:** A fixture is a "preparer". It prepares everything needed for the test (client, token) and passes it to the test.
 
-### Шаг 3: Тест делает запрос через клиент
+### Step 3: Test makes request through client
 
 ```python
 response = auth_client.post("/users", json=payload)
 ```
 
-Внутри `BaseClient.post()`:
+Inside `BaseClient.post()`:
 
-- Строится полный URL (base_url + путь)
-- Добавляются заголовки (включая Authorization токен)
-- **Логируется запрос** (метод, URL, параметры) через `utils/logging`
-- Отправляется HTTP запрос через `requests.Session`
-- **Логируется ответ** (статус-код, время ответа) через `utils/logging`
-- Если ошибка — повторяет запрос (retry механизм)
+- Full URL is built (base_url + path)
+- Headers are added (including Authorization token)
+- **Request is logged** (method, URL, parameters) via `utils/logging`
+- HTTP request is sent via `requests.Session`
+- **Response is logged** (status code, response time) via `utils/logging`
+- If error — retries the request (retry mechanism)
 
-**Простыми словами:** Клиент берет на себя всю "грязную работу" — формирует URL, добавляет заголовки, логирует каждый запрос и ответ (URL, статус-код, время), повторяет при ошибках.
+**In simple terms:** The client handles all the "dirty work" — forms the URL, adds headers, logs every request and response (URL, status code, time), retries on errors.
 
-### Шаг 4: Получен ответ
+### Step 4: Response received
 
-`BaseClient` возвращает объект `requests.Response` с данными ответа.
+`BaseClient` returns a `requests.Response` object with response data.
 
-### Шаг 5: Валидация ответа
+### Step 5: Response validation
 
-Тест проверяет ответ:
+The test checks the response:
 
 ```python
-assert_status_code(response, 201)  # Проверка статус-кода
-validate_response_time(response, max_time_ms=1000)  # Проверка времени
-validate_pydantic_model(response.json(), UserModel)  # Проверка структуры
+assert_status_code(response, 201)  # Status code check
+validate_response_time(response, max_time_ms=1000)  # Time check
+validate_pydantic_model(response.json(), UserModel)  # Structure check
 ```
 
-**Простыми словами:** Валидаторы проверяют, что ответ правильный — статус-код 201, ответ пришел быстро, структура данных соответствует ожидаемой.
+**In simple terms:** Validators check that the response is correct — status code 201, response came quickly, data structure matches expected.
 
-### Шаг 6: Результат
+### Step 6: Result
 
-Если все проверки прошли — тест успешен. Если нет — тест падает с понятным сообщением об ошибке.
+If all checks pass — test is successful. If not — test fails with a clear error message.
 
-## 📝 Где что хранится
+## 📝 Where Things Are Stored
 
-### Конфигурация
+### Configuration
 
-- **`.env`** — файл с переменными окружения (BASE_URL, токены, таймауты). Этот файл не коммитится в git.
-- **`.env.example`** — пример файла с переменными окружения. Показывает, какие переменные нужны.
-- **`config/settings.py`** — код, который читает `.env` и предоставляет настройки через класс `Settings`.
+- **`.env`** — file with environment variables (BASE_URL, tokens, timeouts). This file is not committed to git.
+- **`.env.example`** — example file with environment variables. Shows which variables are needed.
+- **`config/settings.py`** — code that reads `.env` and provides settings via the `Settings` class.
 
-**Простыми словами:** Настройки хранятся в `.env`, а код в `config/settings.py` их читает и делает доступными для всего фреймворка.
+**In simple terms:** Settings are stored in `.env`, and the code in `config/settings.py` reads them and makes them available to the entire framework.
 
-### Тестовые данные
+### Test Data
 
-- **`data/`** — папка с JSON файлами (схемы, примеры данных).
-- **`utils/data_generators.py`** — код для генерации тестовых данных на лету (случайные email, имена и т.д.).
+- **`data/`** — folder with JSON files (schemas, data examples).
+- **`utils/data_generators.py`** — code for generating test data on the fly (random emails, names, etc.).
 
-**Простыми словами:** Тестовые данные можно хранить в файлах или генерировать программно.
+**In simple terms:** Test data can be stored in files or generated programmatically.
 
-## 🚀 Как запускаются тесты
+## 🚀 How Tests Are Run
 
-### Локально
+### Locally
 
-1. **Активация виртуального окружения:**
+1. **Activate virtual environment:**
 
    ```bash
    # Windows
@@ -141,51 +141,51 @@ validate_pydantic_model(response.json(), UserModel)  # Проверка стру
    source .venv/bin/activate
    ```
 
-2. **Настройка окружения:**
-   - Скопировать `.env.example` в `.env`
-   - Заполнить реальными значениями (BASE_URL, токены)
+2. **Environment setup:**
+   - Copy `.env.example` to `.env`
+   - Fill in real values (BASE_URL, tokens)
 
-3. **Запуск тестов:**
+3. **Run tests:**
 
    ```bash
-   pytest                    # Все тесты
-   pytest -m smoke          # Только smoke тесты
-   pytest -v                # С подробным выводом
-   pytest tests/test_crud_user.py  # Конкретный файл
+   pytest                    # All tests
+   pytest -m smoke          # Only smoke tests
+   pytest -v                # With verbose output
+   pytest tests/test_crud_user.py  # Specific file
    ```
 
-**Простыми словами:** Активируем окружение, настраиваем `.env`, запускаем pytest.
+**In simple terms:** Activate environment, configure `.env`, run pytest.
 
-### В CI (Continuous Integration)
+### In CI (Continuous Integration)
 
-В планах — добавление GitHub Actions workflow (`.github/workflows/tests.yml`), который будет:
+Planned — adding GitHub Actions workflow (`.github/workflows/tests.yml`), which will:
 
-1. Автоматически запускаться при каждом push в репозиторий
-2. Устанавливать зависимости
-3. Настраивать переменные окружения из секретов GitHub
-4. Запускать все тесты
-5. Сохранять отчеты как артефакты
+1. Automatically run on every push to the repository
+2. Install dependencies
+3. Configure environment variables from GitHub secrets
+4. Run all tests
+5. Save reports as artifacts
 
-**Простыми словами:** CI автоматически проверяет, что все тесты проходят, когда кто-то добавляет новый код.
+**In simple terms:** CI automatically checks that all tests pass when someone adds new code.
 
-## 🎯 Ключевые принципы архитектуры
+## 🎯 Key Architecture Principles
 
-1. **Разделение ответственности:** Каждый модуль отвечает за свою задачу (клиент — за запросы, валидаторы — за проверки, тесты — за сценарии).
+1. **Separation of concerns:** Each module is responsible for its own task (client — for requests, validators — for checks, tests — for scenarios).
 
-2. **Переиспользование:** Фикстуры и утилиты используются во всех тестах, не дублируются.
+2. **Reusability:** Fixtures and utilities are used in all tests, not duplicated.
 
-3. **Конфигурируемость:** Все настройки вынесены в `.env`, легко переключаться между окружениями (dev/staging/prod).
+3. **Configurability:** All settings are in `.env`, easy to switch between environments (dev/staging/prod).
 
-4. **Централизованное логирование:** Все модули используют единый логгер из `utils/logging.py`, что обеспечивает единообразный формат логов и упрощает отладку.
+4. **Centralized logging:** All modules use a single logger from `utils/logging.py`, which ensures uniform log format and simplifies debugging.
 
-5. **Простота:** Код написан так, чтобы его было легко понять и расширить.
+5. **Simplicity:** Code is written to be easy to understand and extend.
 
-## 📚 Резюме для собеседования
+## 📚 Interview Summary
 
-Если нужно кратко объяснить архитектуру:
+If you need to briefly explain the architecture:
 
-> "Фреймворк состоит из четырех основных модулей: `client/` — HTTP клиент для работы с API, `config/` — настройки проекта, `utils/` — вспомогательные функции для валидации и генерации данных, `tests/` — сами тесты и фикстуры pytest.
+> "The framework consists of four main modules: `client/` — HTTP client for working with the API, `config/` — project settings, `utils/` — helper functions for validation and data generation, `tests/` — the tests themselves and pytest fixtures.
 >
-> Поток работы простой: тест вызывает фикстуру, которая создает API клиент, клиент делает запрос, получает ответ, тест валидирует ответ через утилиты. Всё логируется и переиспользуется.
+> The workflow is simple: test calls a fixture, which creates an API client, client makes a request, gets a response, test validates the response via utilities. Everything is logged and reused.
 >
-> Конфигурация хранится в `.env` файле, тестовые данные — в `data/` или генерируются программно. Тесты запускаются локально через pytest или автоматически в CI при каждом коммите."
+> Configuration is stored in the `.env` file, test data — in `data/` or generated programmatically. Tests run locally via pytest or automatically in CI on every commit."

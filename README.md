@@ -1,109 +1,119 @@
 # API Testing Framework Demo
 
-Легкий и быстрый фреймворк для API-тестирования на Python с использованием pytest.
+Lightweight and fast API testing framework for Python using pytest.
 
-## 🎯 Описание проекта
+## 🎯 Project Description
 
-Этот проект представляет собой шаблон (template) для создания API-тестирования фреймворка на Python с использованием pytest. 
+This project is a template for creating an API testing framework in Python using pytest.
 
-Фреймворк предоставляет базовую структуру и функциональность для быстрого старта API-тестирования:
+The framework provides basic structure and functionality for quick start with API testing:
 
-- **Базовый API-клиент** с поддержкой сессий, таймаутов и обработкой ошибок
-- **Pytest фикстуры** для переиспользования в тестах
-- **Модульная структура** проекта для легкого расширения
-- **Конфигурация через переменные окружения** для разных сред
+- **Base API client** with session support, timeouts, and error handling
+- **Pytest fixtures** for reuse in tests
+- **Modular project structure** for easy extension
+- **Environment variable configuration** for different environments
 
-Подробнее о реализованных функциях и планах развития см. раздел [Особенности фреймворка](#-особенности-фреймворка).
+For more details on implemented features and development plans, see the [Framework Features](#-framework-features) section.
 
-## ✨ Особенности фреймворка
+## ✨ Framework Features
 
-### ✅ Реализовано
+### ✅ Implemented
 
-#### 🔧 Базовый API-клиент
-- **HTTP клиент на базе requests**: Использование библиотеки `requests` с поддержкой сессий
-- **Session management**: Переиспользование соединений через `requests.Session`
-- **Таймауты**: Настраиваемые таймауты для всех запросов
-- **Централизованное логирование**: Модуль `utils/logging.py` для единообразного логирования во всем фреймворке
-- **Детальное логирование запросов**: Автоматическое логирование URL, метода, статус-кода и времени ответа
-- **Retry механизм**: Автоматические повторы при ошибках (5xx, таймауты)
-- **Кастомные исключения**: Информативная обработка ошибок (`APIRequestException`, `APITimeoutException`, etc.)
-- **Типизация**: Type hints для лучшей поддержки IDE
+#### 🔧 Base API Client
 
-#### 🧪 Тесты и фикстуры
-- **Pytest фикстуры**: Централизованные фикстуры в `conftest.py` для переиспользования
-- **Базовые CRUD-тесты**: Примеры тестов создания, чтения, обновления и удаления ресурсов
-- **Параметризация тестов**: Использование `@pytest.mark.parametrize` для негативных тестов
+- **HTTP client based on requests**: Using `requests` library with session support
+- **Session management**: Connection reuse via `requests.Session`
+- **Timeouts**: Configurable timeouts for all requests
+- **Centralized logging**: `utils/logging.py` module for uniform logging across the framework
+- **Detailed request logging**: Automatic logging of URL, method, status code, and response time
+- **Retry mechanism**: Automatic retries on errors (5xx, timeouts)
+- **Custom exceptions**: Informative error handling (`APIRequestException`, `APITimeoutException`, etc.)
+- **Type hints**: Type hints for better IDE support
 
-#### ⚙️ Конфигурация
-- **Модуль config/**: Управление настройками через `config/settings.py`
-- **Переменные окружения**: Поддержка разных окружений (dev/staging/prod/test) через `.env`
-- **Настройка через .env**: Простая конфигурация через файл `.env.example`
+#### 🧪 Tests and Fixtures
 
-#### 🏗️ Структура проекта
-- **Модульная архитектура**: Разделение на `client/`, `utils/`, `config/`, `tests/`
-- **Переиспользуемые утилиты**: Базовые хелперы и валидаторы в модуле `utils/`
+- **Pytest fixtures**: Centralized fixtures in `conftest.py` for reuse
+- **Basic CRUD tests**: Examples of create, read, update, and delete resource tests
+- **Test parametrization**: Using `@pytest.mark.parametrize` for negative tests
 
-### 🧭 В планах
+#### ⚙️ Configuration
 
-#### 📊 Расширенная валидация
-- **Pydantic модели**: Полная интеграция Pydantic для типобезопасной валидации данных
-- **JSON Schema валидация**: Расширенная валидация структуры ответов через JSON Schema
-- **Валидация производительности**: Автоматическая проверка времени ответа API
+- **config/ module**: Settings management via `config/settings.py`
+- **Environment variables**: Support for different environments (dev/staging/prod/test) via `.env`
+- **Configuration via .env**: Simple configuration through `.env.example` file
 
-#### 📈 Отчетность
-- **Allure интеграция**: Детальные отчеты с steps, attachments, группировкой по маркерам
-- **HTML отчеты**: Расширенные HTML отчеты pytest с дополнительной информацией
-- **Интеграция с системами мониторинга**: Отправка метрик и результатов тестов
+#### 🏗️ Project Structure
 
-#### 🎯 Генерация данных
-- **Faker интеграция**: Генерация реалистичных тестовых данных с помощью библиотеки Faker
-- **UserDataGenerator**: Удобные классы для генерации различных типов тест-данных
+- **Modular architecture**: Separation into `client/`, `utils/`, `config/`, `tests/`
+- **Reusable utilities**: Basic helpers and validators in `utils/` module
+
+### 🧭 Planned
+
+#### 📊 Extended Validation
+
+- **Pydantic models**: Full Pydantic integration for type-safe data validation
+- **JSON Schema validation**: Extended response structure validation via JSON Schema
+- **Performance validation**: Automatic API response time checking
+
+#### 📈 Reporting
+
+- **Allure integration**: Detailed reports with steps, attachments, marker grouping
+- **HTML reports**: Extended pytest HTML reports with additional information
+- **Monitoring system integration**: Sending metrics and test results
+
+#### 🎯 Data Generation
+
+- **Faker integration**: Generating realistic test data using Faker library
+- **UserDataGenerator**: Convenient classes for generating various types of test data
 
 #### 🔄 CI/CD
-- **GitHub Actions workflow**: Автоматический запуск тестов на нескольких версиях Python
-- **Линтинг в CI**: Автоматическая проверка кода с ruff и mypy
-- **Артефакты**: Сохранение отчетов и артефактов для анализа
-- **Pre-commit hooks**: Автоматическая проверка кода перед коммитом
 
-#### 🧪 Расширенные тесты
-- **Тесты производительности**: Автоматизированная проверка времени ответа различных эндпоинтов
-- **Тесты безопасности**: Расширенная проверка авторизации, защита от SQL инъекций, XSS и др.
-- **Интеграция с базами данных**: Утилиты для работы с БД в тестах
-- **Мокирование внешних сервисов**: Интеграция с библиотеками для мокирования (responses, httpx)
+- **GitHub Actions workflow**: Automatic test execution on multiple Python versions
+- **Linting in CI**: Automatic code checking with ruff and mypy
+- **Artifacts**: Saving reports and artifacts for analysis
+- **Pre-commit hooks**: Automatic code checking before commit
 
-#### 🐳 Инфраструктура
-- **Docker контейнеризация**: Dockerfile и docker-compose для запуска тестов в контейнерах
-- **Параллельный запуск**: Оптимизация параллельного запуска тестов
+#### 🧪 Extended Tests
 
-## 📈 Преимущества для уровня Middle+ AQA
+- **Performance tests**: Automated checking of response time for various endpoints
+- **Security tests**: Extended authorization checking, SQL injection protection, XSS, etc.
+- **Database integration**: Utilities for working with databases in tests
+- **External service mocking**: Integration with mocking libraries (responses, httpx)
 
-- **Профессиональная структура**: Модульная архитектура, разделение ответственности
-- **Надежность**: Retry механизм, обработка ошибок, валидация данных
-- **Поддерживаемость**: Документация, типизация, логирование
-- **Масштабируемость**: Легко добавлять новые тесты, гибкая конфигурация
-- **Качество кода**: Линтинг, типизация, best practices
+#### 🐳 Infrastructure
 
-## 📋 Требования
+- **Docker containerization**: Dockerfile and docker-compose for running tests in containers
+- **Parallel execution**: Optimization of parallel test execution
+
+## 📈 Benefits for Middle+ AQA Level
+
+- **Professional structure**: Modular architecture, separation of concerns
+- **Reliability**: Retry mechanism, error handling, data validation
+- **Maintainability**: Documentation, type hints, logging
+- **Scalability**: Easy to add new tests, flexible configuration
+- **Code quality**: Linting, type hints, best practices
+
+## 📋 Requirements
 
 - Python 3.9+
-- pip или poetry
+- pip or poetry
 
-## 🚀 Установка
+## 🚀 Installation
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 
 ```bash
 git clone <repository-url>
 cd pytest-api-demo
 ```
 
-2. Создайте виртуальное окружение:
+2. Create a virtual environment:
 
 ```bash
 python -m venv .venv
 ```
 
-3. Активируйте виртуальное окружение:
+3. Activate the virtual environment:
 
 ```bash
 # Windows
@@ -113,95 +123,97 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-4. Установите зависимости:
+4. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 🏃 Запуск тестов
+## 🏃 Running Tests
 
-### Базовый запуск всех тестов
+### Basic run of all tests
 
 ```bash
 pytest
 ```
 
-### Запуск с маркерами
+### Run with markers
 
 ```bash
-# Только smoke тесты
+# Only smoke tests
 pytest -m smoke
 
-# Пропустить slow тесты
+# Skip slow tests
 pytest -m "not slow"
 ```
 
-### Запуск с Allure отчетом
+### Run with Allure report
 
 ```bash
-# Запуск с генерацией Allure результатов
+# Run with Allure results generation
 pytest --alluredir=allure-results
 
-# Открыть отчет в браузере
+# Open report in browser
 allure serve allure-results
 ```
 
-### Параллельный запуск
+### Parallel execution
 
 ```bash
 pytest -n auto
 ```
 
-### Запуск с логированием
+### Run with logging
 
 ```bash
 pytest -v -s
 ```
 
-## 📁 Структура проекта
+## 📁 Project Structure
 
 ```
 pytest-api-demo/
-├── client/                      # API клиенты
-│   ├── api_base_client.py       # Базовый HTTP клиент
-│   ├── exceptions.py            # Кастомные исключения
-│   └── __init__.py              # Экспорт модуля
-├── tests/                       # Тесты
-│   ├── conftest.py              # Конфигурация pytest и фикстуры
-│   ├── test_crud_user.py        # CRUD тесты
-│   ├── test_create_user_negative.py  # Негативные тесты
-│   ├── test_post_user.py        # Тесты создания пользователя
-│   ├── test_performance.py      # Тесты производительности
-│   └── test_security.py         # Тесты безопасности
-├── utils/                       # Утилиты
-│   ├── validators.py            # Валидаторы ответов
-│   ├── data_generators.py       # Генераторы тест-данных
-│   ├── helpers.py               # Вспомогательные функции
-│   ├── models.py                # Pydantic модели
-│   └── __init__.py              # Экспорт модуля
-├── config/                      # Конфигурация
-│   ├── settings.py              # Настройки окружений
-│   └── __init__.py              # Экспорт модуля
-├── data/                        # Тест-данные
-│   └── endpoint_one.json        # JSON схемы
-├── .env.example                 # Пример файла с переменными окружения
-├── requirements.txt             # Зависимости Python
-├── pytest.ini                   # Конфигурация pytest
-├── pyproject.toml               # Конфигурация проекта
-└── README.md                    # Документация
+├── client/                      # API clients
+│   ├── api_base_client.py       # Base HTTP client
+│   ├── exceptions.py            # Custom exceptions
+│   └── __init__.py              # Module export
+├── tests/                       # Tests
+│   ├── conftest.py              # Pytest configuration and fixtures
+│   ├── test_crud_user.py        # CRUD tests
+│   ├── test_create_user_negative.py  # Negative tests
+│   ├── test_post_user.py        # User creation tests
+│   ├── test_performance.py      # Performance tests
+│   └── test_security.py         # Security tests
+├── utils/                       # Utilities
+│   ├── validators.py            # Response validators
+│   ├── data_generators.py       # Test data generators
+│   ├── helpers.py               # Helper functions
+│   ├── models.py                # Pydantic models
+│   └── __init__.py              # Module export
+├── config/                      # Configuration
+│   ├── settings.py              # Environment settings
+│   └── __init__.py              # Module export
+├── data/                        # Test data
+│   └── endpoint_one.json        # JSON schemas
+├── .env.example                 # Example environment variables file
+├── requirements.txt             # Python dependencies
+├── pytest.ini                   # Pytest configuration
+├── pyproject.toml               # Project configuration
+└── README.md                    # Documentation
 ```
 
-## 🔧 Конфигурация
+## 🔧 Configuration
 
-### Настройка окружения
+### Environment Setup
 
-1. Скопируйте файл `.env.example` в `.env`:
+1. Copy `.env.example` file to `.env`:
+
    ```bash
    cp .env.example .env
    ```
 
-2. Отредактируйте `.env` и заполните реальными значениями:
+2. Edit `.env` and fill in real values:
+
    ```env
    BASE_URL=https://api.example.com
    ENV=dev
@@ -209,48 +221,50 @@ pytest-api-demo/
    TIMEOUT=10
    ```
 
-**Обязательные переменные:**
-- `BASE_URL` - базовый URL API для тестирования
-- `ENV` - окружение (dev, staging, prod, test)
+**Required variables:**
 
-**Опциональные переменные:**
-- `TIMEOUT` - таймаут запросов в секундах (по умолчанию: 10)
-- `LOG_LEVEL` - уровень логирования (по умолчанию: INFO)
-- `AUTH_USERNAME` / `AUTH_PASSWORD` - учетные данные для авторизации
-- `AUTH_TOKEN` - токен авторизации (если используется токен напрямую)
-- `RETRY_COUNT` - количество попыток повтора при ошибках (по умолчанию: 3)
-- `RETRY_DELAY` - задержка между попытками в секундах (по умолчанию: 1.0)
+- `BASE_URL` - base API URL for testing
+- `ENV` - environment (dev, staging, prod, test)
 
-### Окружения
+**Optional variables:**
 
-Проект поддерживает несколько окружений:
+- `TIMEOUT` - request timeout in seconds (default: 10)
+- `LOG_LEVEL` - logging level (default: INFO)
+- `AUTH_USERNAME` / `AUTH_PASSWORD` - authentication credentials
+- `AUTH_TOKEN` - authentication token (if token is used directly)
+- `RETRY_COUNT` - number of retry attempts on errors (default: 3)
+- `RETRY_DELAY` - delay between attempts in seconds (default: 1.0)
 
-- `dev` - разработка
-- `staging` - тестирование
-- `prod` - продакшн
-- `test` - тестовое окружение
+### Environments
 
-Используйте переменную `ENV` для переключения окружений.
+The project supports multiple environments:
 
-## 📊 Отчеты
+- `dev` - development
+- `staging` - testing
+- `prod` - production
+- `test` - test environment
+
+Use the `ENV` variable to switch between environments.
+
+## 📊 Reports
 
 ### Allure
 
-После запуска тестов с флагом `--alluredir`:
+After running tests with `--alluredir` flag:
 
 ```bash
 allure serve allure-results
 ```
 
-### HTML отчет pytest
+### Pytest HTML report
 
 ```bash
 pytest --html=report.html --self-contained-html
 ```
 
-## 🧪 Примеры тестов
+## 🧪 Test Examples
 
-### Простой тест
+### Simple test
 
 ```python
 def test_get_user(api_client):
@@ -259,7 +273,7 @@ def test_get_user(api_client):
     assert response.json()["id"] == 1
 ```
 
-### Тест с валидацией схемы
+### Test with schema validation
 
 ```python
 def test_create_user_success(auth_client):
@@ -270,45 +284,46 @@ def test_create_user_success(auth_client):
     validate_json_schema(response.json(), user_schema)
 ```
 
-## 🛠️ Разработка
+## 🛠️ Development
 
-### Линтинг
+### Linting
 
 ```bash
 ruff check .
 ruff format .
 ```
 
-### Типизация
+### Type checking
 
 ```bash
 mypy .
 ```
 
-### Логирование
+### Logging
 
-Фреймворк использует централизованное логирование через модуль `utils/logging.py`:
+The framework uses centralized logging via the `utils/logging.py` module:
 
 ```python
 from utils.logging import get_logger
 
 logger = get_logger(__name__)
-logger.info("Информационное сообщение")
-logger.debug("Отладочное сообщение")
-logger.warning("Предупреждение")
-logger.error("Ошибка")
+logger.info("Information message")
+logger.debug("Debug message")
+logger.warning("Warning")
+logger.error("Error")
 ```
 
-**Что логируется автоматически:**
-- Все HTTP запросы (метод, URL, параметры)
-- Все HTTP ответы (статус-код, время ответа)
-- Ошибки и retry попытки
-- Запуск и завершение тестов
+**What is logged automatically:**
 
-**Уровень логирования** настраивается через переменную окружения `LOG_LEVEL` в `.env` файле (DEBUG, INFO, WARNING, ERROR).
+- All HTTP requests (method, URL, parameters)
+- All HTTP responses (status code, response time)
+- Errors and retry attempts
+- Test start and completion
 
-## 📝 Развитие проекта
+**Logging level** is configured via the `LOG_LEVEL` environment variable in the `.env` file (DEBUG, INFO, WARNING, ERROR).
 
-Список запланированных улучшений и новых функций см. в разделе [🧭 В планах](#-в-планах) выше.
+## 📝 Project Development
 
-Если вы хотите внести вклад в развитие фреймворка, создайте issue или pull request с описанием предлагаемых изменений.
+For a list of planned improvements and new features, see the [🧭 Planned](#-planned) section above.
+
+If you would like to contribute to the framework development, create an issue or pull request with a description of the proposed changes.
